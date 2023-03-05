@@ -53,9 +53,9 @@ class GetReplyTextByUserPostMessage
 
     private function replyMatchList():string
     {
-        $riotApiKey = getenv('RIOT_API_KEY');
+        $riotApiKey = $_ENV['RIOT_API_KEY'];
         $summonerJson = json_decode($this->_getSummoner());
-        $matchListUrl = "https://jp1.api.riotgames.com/lol/match/v4/matchlists/by-account/{$summonerJson->accountId}?endIndex=5&beginIndex=0&api_key={$riotApiKey}";
+        $matchListUrl = "https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/{$summonerJson->puuid}/ids?endIndex=5&beginIndex=0&api_key={$riotApiKey}";
         $matchListRaw = file_get_contents($matchListUrl);
         return $matchListRaw;
     }
@@ -68,7 +68,7 @@ class GetReplyTextByUserPostMessage
 
     private function _getSummoner():string
     {
-        $riotApiKey = getenv('RIOT_API_KEY');
+        $riotApiKey = $_ENV['RIOT_API_KEY'];
         $summoerUrl = "https://jp1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{$this->q}?api_key={$riotApiKey}";
         $summonerRaw = file_get_contents($summoerUrl);
         return $summonerRaw;
@@ -84,7 +84,7 @@ class GetReplyTextByUserPostMessage
         return $ss;
     }
 
-    private function teamDiv2():string
+    private function teamDiv2()
     {
         $array_divide = function ($arr, $division) {
             $count = ceil(count($arr) / $division); // 部分配列1個あたりの要素数

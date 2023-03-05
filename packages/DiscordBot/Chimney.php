@@ -35,7 +35,7 @@ class Chimney
     public function setService(): bool
     {
         @[$command, $arg] = preg_split('/[\s|\x{3000}]+/u', $this->input);
-        $command = 'DiscordBot\ChimneyServices\\' . strtoupper($command);
+        $command = 'DiscordBot\ChimneyServices\\' . ucfirst($command);
         if (!class_exists($command)) {
             return false;
         }

@@ -2,6 +2,9 @@
 
 namespace DiscordBot;
 
+use Discord\Helpers\Collection;
+use DiscordBot\ChimneyServices\Gpt;
+
 class Chimney
 {
     private const MY_NAME = '直腸亭チムニー';
@@ -12,6 +15,7 @@ class Chimney
     (
         private string $author,
         private string $input,
+        private Collection $mentions,
     ) {}
 
     public function isMyMessage(): bool
@@ -36,6 +40,10 @@ class Chimney
     {
         @[$command, $arg] = preg_split('/[\s|\x{3000}]+/u', $this->input);
         $command = 'DiscordBot\ChimneyServices\\' . ucfirst($command);
+        $mention = $this->mentions->find(fn($mention) => $mention->username === self::MY_NAME);
+        if ($mention) {
+            $command = 'DiscordBot\ChimneyServices\Gpt';
+        }
         if (!class_exists($command)) {
             return false;
         }

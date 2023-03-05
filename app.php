@@ -21,6 +21,7 @@ $discord->on('ready', function (Discord $discord) {
         $chimney = new Chimney(
             $message->author->username,
             $message->content,
+            $message->mentions,
         );
         if ($chimney->hasReply()) {
             if ($chimney->service instanceof Team) {

@@ -3,6 +3,8 @@ include __DIR__.'/vendor/autoload.php';
 
 use Discord\WebSockets\Event;
 use Dotenv\Dotenv;
+use DiscordBot\Application\Commands\GetReplyTextByUserPostMessage;
+use Discord\Parts\Channel\Message;
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
@@ -16,30 +18,13 @@ $discord = new \Discord\Discord([
     'intents' => \Discord\WebSockets\Intents::getDefaultIntents(),
 ]);
 
-$discord->on('ready', function (\Discord\Discord $discord) {
-    echo "Bot is ready.", PHP_EOL;
+$getReplyTextByUserPostMessage = new GetReplyTextByUserPostMessage();
 
-    // Listen for events here
-    $discord->on(Event::MESSAGE_CREATE, function (\Discord\Parts\Channel\Message $message) {
-        echo "Recieved a message from {$message->author->username}: {$message->content}", PHP_EOL;
-        if ('直腸亭チムニー' !== $message->author->username) {
-            if (startsWith($message->content, 'build')) {
-                $hoge = preg_split('/[\s|\x{3000}]+/u', $message->content);
-                $q = $hoge[1];
-                $url = "https://lolbuild.jp/build?q={$q}&champion=&is_top=1&type=build";
-                $message->reply($url);
-            } elseif (startsWith($message->content, 'opgg')) {
-                $hoge = preg_split('/[\s|\x{3000}]+/u', $message->content);
-                $q = $hoge[1];
-                $url = "https://jp.op.gg/summoner/userName={$q}";
-                $message->reply($url);
-            } elseif (startsWith($message->content, 'mc-server')) {
-                $hoge = preg_split('/[\s|\x{3000}]+/u', $message->content);
-                $q = $hoge[1];
-                $text = "minecraft server {$q}...";
-                $message->reply($text);
-            }
-        }
+$discord->on('ready', function (\Discord\Discord $discord) use($getReplyTextByUserPostMessage) {
+    $discord->on('message', function (Message $message) use($discord, $getReplyTextByUserPostMessage) {
+        if ($message->author->username === '直腸亭チムニー') { return; }
+        $text = ($getReplyTextByUserPostMessage)($discord, $message);
+        if ($text) { $message->reply($text); }
     });
 });
 

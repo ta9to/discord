@@ -7,6 +7,11 @@
       "email": "ta9to.kd@gmail.com"
     }
   ],
+  "autoload": {
+    "psr-4": {
+      "DiscordBot\\" : "packages/DiscordBot"
+    }
+  },
   "require": {
     "team-reflex/discord-php": "^7.3",
     "vlucas/phpdotenv": "^5.5"

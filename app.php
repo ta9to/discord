@@ -22,7 +22,7 @@ $getReplyTextByUserPostMessage = new GetReplyTextByUserPostMessage();
 
 $discord->on('ready', function (\Discord\Discord $discord) use($getReplyTextByUserPostMessage) {
     $discord->on('message', function (Message $message) use($discord, $getReplyTextByUserPostMessage) {
-        if ($message->author->username === '直腸亭チムニー' || $message->channel_id === '732386754056683651') { return; }
+        if ($message->author->username === '直腸亭チムニー') { return; }
         $text = ($getReplyTextByUserPostMessage)($discord, $message);
         if ($text) { $message->reply($text); }
     });

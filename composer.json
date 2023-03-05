@@ -1,0 +1,14 @@
+{
+  "name": "ta9to/discord",
+  "type": "project",
+  "authors": [
+    {
+      "name": "ta9to",
+      "email": "ta9to.kd@gmail.com"
+    }
+  ],
+  "require": {
+    "team-reflex/discord-php": "^7.3",
+    "vlucas/phpdotenv": "^5.5"
+  }
+}

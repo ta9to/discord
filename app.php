@@ -1,30 +1,36 @@
 <?php
 include __DIR__.'/vendor/autoload.php';
 
-use Discord\WebSockets\Event;
 use Dotenv\Dotenv;
-use DiscordBot\Application\Commands\GetReplyTextByUserPostMessage;
+use DiscordBot\Chimney;
 use Discord\Parts\Channel\Message;
+use Discord\Discord;
+use Discord\WebSockets\Intents;
+use DiscordBot\ChimneyServices\Team;
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-function startsWith($haystack, $needle) {
-    return str_starts_with($haystack, $needle);
-}
-
-$discord = new \Discord\Discord([
+$discord = new Discord([
     'token' => $_ENV['DISCORD_TOKEN'],
-    'intents' => \Discord\WebSockets\Intents::getDefaultIntents(),
+    'intents' => Intents::getDefaultIntents(),
 ]);
 
-$getReplyTextByUserPostMessage = new GetReplyTextByUserPostMessage();
-
-$discord->on('ready', function (\Discord\Discord $discord) use($getReplyTextByUserPostMessage) {
-    $discord->on('message', function (Message $message) use($discord, $getReplyTextByUserPostMessage) {
-        if ($message->author->username === '直腸亭チムニー' || $message->channel_id == '732386754056683651') { return; }
-        $text = ($getReplyTextByUserPostMessage)($discord, $message);
-        if ($text) { $message->reply($text); }
+$discord->on('ready', function (Discord $discord) {
+    $discord->on('message', function (Message $message) {
+        $chimney = new Chimney(
+            $message->author->username,
+            $message->content,
+        );
+        if ($chimney->hasReply()) {
+            if ($chimney->service instanceof Team) {
+                $chimney->service
+                    ->setMessage($message)
+                    ->execute();
+            } else {
+                $message->reply($chimney->message());
+            }
+        }
     });
 });
 

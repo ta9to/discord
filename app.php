@@ -34,7 +34,7 @@ $discord->on('ready', function (Discord $discord) {
             } else {
                 if ($chimney->service instanceof Gpt) {
                     $message->channel
-                        ->getMessageHistory(['limit' => 10])
+                        ->getMessageHistory(['limit' => 5])
                         ->done(function (Collection $messages) use($chimney, $message) {
                             $chimney->service->setMessages($messages);
                             $message->reply($chimney->message());

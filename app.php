@@ -7,6 +7,9 @@ use Discord\Parts\Channel\Message;
 use Discord\Discord;
 use Discord\WebSockets\Intents;
 use DiscordBot\ChimneyServices\Team;
+use Discord\Helpers\Collection;
+use DiscordBot\ChimneyServices\Gpt;
+use Discord\Parts\Thread\Thread;
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
@@ -18,6 +21,10 @@ $discord = new Discord([
 
 $discord->on('ready', function (Discord $discord) {
     $discord->on('message', function (Message $message) {
+        // 開発中に他のチャンネルでの会話に反応しないようにテストチャンネル以外のメッセージは無視する
+        if ($message->channel_id != '732386754056683651') {
+            return;
+        }
         $chimney = new Chimney(
             $message->author->username,
             $message->content,
@@ -29,7 +36,21 @@ $discord->on('ready', function (Discord $discord) {
                     ->setMessage($message)
                     ->execute();
             } else {
-                $message->reply($chimney->message());
+                if ($chimney->service instanceof Gpt) {
+                    $message->channel
+                        ->getMessageHistory(['limit' => 10])
+                        ->done(function (Collection $messages) use($chimney, $message) {
+                            $chimney->service->setMessages($messages);
+                            $message->reply($chimney->message());
+//                            $res = $chimney->message();
+//                            $thread = trim(preg_replace('/<.*>/', '', $chimney->input));
+//                            $message
+//                                ->startThread($thread)
+//                                ->then(function (Thread $thread) use($res) {
+//                                    $thread->sendMessage($res);
+//                                });
+                        });
+                }
             }
         }
     });

@@ -7,14 +7,14 @@ use DiscordBot\ChimneyServices\Gpt;
 
 class Chimney
 {
-    private const MY_NAME = '直腸亭チムニー';
+    public const MY_NAME = '直腸亭チムニー';
 
     public $service;
 
     public function __construct
     (
         private string $author,
-        private string $input,
+        public string $input,
         private Collection $mentions,
     ) {}
 

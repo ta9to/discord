@@ -21,10 +21,6 @@ $discord = new Discord([
 
 $discord->on('ready', function (Discord $discord) {
     $discord->on('message', function (Message $message) {
-        // 開発中に他のチャンネルでの会話に反応しないようにテストチャンネル以外のメッセージは無視する
-        if ($message->channel_id != '732386754056683651') {
-            return;
-        }
         $chimney = new Chimney(
             $message->author->username,
             $message->content,

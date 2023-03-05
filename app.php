@@ -46,6 +46,8 @@ $discord->on('ready', function (Discord $discord) {
 //                                    $thread->sendMessage($res);
 //                                });
                         });
+                } else {
+                    $message->reply($chimney->message());
                 }
             }
         }

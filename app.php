@@ -21,6 +21,10 @@ $discord = new Discord([
 
 $discord->on('ready', function (Discord $discord) {
     $discord->on('message', function (Message $message) {
+        // 本番環境ではテストチャンネルの投稿はスルー
+        if ($_ENV['APP_ENV'] == 'production' && $message->channel_id == '732386754056683651') {
+            return;
+        }
         $chimney = new Chimney(
             $message->author->username,
             $message->content,

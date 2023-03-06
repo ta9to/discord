@@ -10,6 +10,9 @@ use DiscordBot\ChimneyServices\Team;
 use Discord\Helpers\Collection;
 use DiscordBot\ChimneyServices\Gpt;
 use Discord\Parts\Thread\Thread;
+use Discord\WebSockets\Event;
+use Discord\Parts\WebSockets\VoiceStateUpdate;
+use Discord\Voice\VoiceClient;
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
@@ -20,7 +23,7 @@ $discord = new Discord([
 ]);
 
 $discord->on('ready', function (Discord $discord) {
-    $discord->on('message', function (Message $message) {
+    $discord->on(Event::MESSAGE_CREATE, function (Message $message) {
         // 本番環境ではテストチャンネルの投稿はスルー
         if ($_ENV['APP_ENV'] == 'production' && $message->channel_id == '732386754056683651') {
             return;
@@ -56,6 +59,18 @@ $discord->on('ready', function (Discord $discord) {
             }
         }
     });
+
+    $discord->on(Event::VOICE_STATE_UPDATE, function (VoiceStateUpdate $state, Discord $discord, ?VoiceStateUpdate $oldstate) {
+        $channel = $state->channel;
+        if ($channel) {
+            $discord
+                ->joinVoiceChannel($channel)
+                ->then(function (VoiceClient $client) {
+                    $client->playFile(__DIR__.'/assets/join.mp3');
+                });
+        }
+    });
+
 });
 
 $discord->run();

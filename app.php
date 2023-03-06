@@ -59,18 +59,6 @@ $discord->on('ready', function (Discord $discord) {
             }
         }
     });
-
-    $discord->on(Event::VOICE_STATE_UPDATE, function (VoiceStateUpdate $state, Discord $discord, ?VoiceStateUpdate $oldstate) {
-        $channel = $state->channel;
-        if ($channel) {
-            $discord
-                ->joinVoiceChannel($channel)
-                ->then(function (VoiceClient $client) {
-                    $client->playFile(__DIR__.'/assets/join.mp3');
-                });
-        }
-    });
-
 });
 
 $discord->run();
